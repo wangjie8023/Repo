@@ -1,0 +1,17 @@
+#方法1
+def Way1(str):
+    #将String类型转换为列表
+    list1=list(str)
+    #列表反序
+    list1.reverse()
+    return ''.join(list1)
+
+#方法2    
+def Way2(str): 
+    #通过反向步进切片,实现反转
+    return str[::-1]
+
+#测试
+str=raw_input('请输入您要反转的字符串：')
+print(Way1(str))
+print(Way2(str))
