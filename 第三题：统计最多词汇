@@ -1,0 +1,158 @@
+package com.wangjie;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class WebContent {
+	/**
+	 * 读取某个网页全部内容
+	 */
+	private String url;
+	private HashMap<String, String> hm;
+
+	WebContent(String weburl) {
+		this.url = weburl;
+		hm = new HashMap<String, String>();
+	}
+
+	public String getOneHtml(final String htmlurl) throws IOException {
+		URL url;
+		String temp;
+		final StringBuffer sb = new StringBuffer();
+		try {
+			url = new URL(htmlurl);
+			final BufferedReader in = new BufferedReader(new InputStreamReader(
+					url.openStream(), "utf-8"));// 读取网页全部内容
+			while ((temp = in.readLine()) != null) {
+				sb.append(temp);
+			}
+			in.close();
+		} catch (final MalformedURLException me) {
+			System.out.println("你输入的URL格式有问题！请重新输入");
+			me.getMessage();
+			throw me;
+		} catch (final IOException e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * 去掉标记
+	 */
+	public String outTag(final String s) {
+		return s.replaceAll("<.*?>", "");
+	}
+
+	/**
+	 * 获取的文章内容
+	 */
+	public HashMap<String, String> getFromBaidu(final String s) {
+		final HashMap<String, String> hm = new HashMap<String, String>();
+		final StringBuffer sb = new StringBuffer();
+		String html = "";
+		System.out.println("\n------------------开始读取网页--------------------");
+		try {
+			html = getOneHtml(s);
+		} catch (final Exception e) {
+			e.getMessage();
+		}
+		System.out.println("------------------分析结果如下--------------------\n");
+		final Pattern pa = Pattern.compile("<p class=\"text\">(.*?)</p>",
+				Pattern.DOTALL);
+		final Matcher ma = pa.matcher(html);
+		while (ma.find()) {
+			sb.append(ma.group());
+		}
+		String temp = sb.toString();
+		hm.put("content", outTag(temp));
+		return hm;
+	}
+
+	/**
+	 * 取前十个出现频率最高的
+	 */
+	public static List compare(String str) {
+		// 去掉所有空格
+		str = str.replaceAll("\\s*", "");
+		// 只取汉字
+		str = str.replaceAll("[^_\u4e00-\u9fa5]", "");
+		str = str.replaceAll("的", "");
+		str = str.replaceAll("我", "");
+		str = str.replaceAll("你", "");
+		str = str.replaceAll("们", "");
+		System.out.println(str);
+		char chars[] = str.toCharArray();
+		Map map = new HashMap();
+		// 计算各字符的数量
+		for (int i = 0; i < chars.length; i++) {
+			int num = 0;
+			for (int j = 0; j < chars.length; j++) {
+				if (chars[j] == chars[i]) {
+					++num;
+					if(num>=10){
+						map.put(chars[j],num);
+					}
+				}
+			}
+		}
+		Set keySet = map.keySet();
+		// 放在list里并排序比较
+		ArrayList<String> list = new ArrayList<String>();
+		for (Object o : keySet) {
+			Object x = map.get(o);
+			String o1 = o.toString();
+			String x1 = x.toString();
+			list.add(x1 + o1);
+			System.out.println(o + "的个数为：" + x);
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	/**
+	 * 用来测试
+	 */
+	public static void main(final String args[]) {
+		String htmlurl = "http://taoduanfang.baijia.baidu.com/article/40410";
+		WebContent wc = new WebContent(htmlurl);
+		HashMap<String, String> hm = new HashMap<String, String>();
+
+		hm = wc.getFromBaidu(htmlurl);
+		System.out.println("内容： \n" + hm.get("content"));
+		String str = hm.get("content");
+		List<String> list = new ArrayList<String>();
+		list = compare(str);
+		// 取数量最多的前十个
+		System.out.println("排名前十的有：");
+		for (int i = list.size() - 1; i > list.size() - 11; i--) {
+			System.out.println("\"" + list.get(i).replaceAll("\\d+", "")
+					+ "\"个数为:" + list.get(i).replaceAll("[^0-9]", ""));
+		}
+	}
+}
+/*====================得出结果，输出到控制台===================
+ * 排名前十的有：
+ * "法"个数为:63
+ * "是"个数为:41
+ * "国"个数为:38
+ * "案"个数为:34
+ * "一"个数为:34
+ * "不"个数为:33
+ * "会"个数为:29
+ * "党"个数为:27
+ * "政"个数为:26
+ * "在"个数为:26
+ * */
