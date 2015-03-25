@@ -1,0 +1,38 @@
+
+import java.util.Scanner;
+public class Test {
+	//方法1：从后到前遍历
+	public static String Way1(String str){
+		StringBuffer sb=new StringBuffer();
+		for (int i = str.length()-1; i >=0; i--) {
+			sb.append(str.charAt(i));
+		}
+		return sb.toString();
+	}
+	
+	//方法2：利用StringBuffer的reverse()方法
+	public static String Way2(String str){
+		str=new StringBuffer(str).reverse().toString();
+		return str;
+	} 
+	
+	//方法3：将String转变为char数组
+	public static String Way3(String str){
+		char char1[]=str.toCharArray();
+		String str1="";
+		for (int i = char1.length-1; i>=0; i--) {
+			str1+=char1[i];
+		}
+		return str1;
+	}
+	//用于测试
+	public static void main(String[] args) {
+		//输入字符串
+		System.out.println("请输入原始字符串：");
+		Scanner s=new Scanner(System.in);
+		String str=s.next();
+		//测试开始
+		str=Test.Way3(str);
+		System.out.println(str);
+}
+}
