@@ -1,0 +1,56 @@
+jsp页面代码：
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="resource/jquery-1.7.2.min.js"></script>
+<link rel="stylesheet" href="resource/show.css" type="text/css">
+<script type="text/javascript">
+/* $(function(){
+	$("#btn1").click(function(){
+		$.ajax({
+			type:"post",
+			url:"GetFromDouServlet",
+			dataType:"html",
+			data:"KeyWords="+$("#KeyWords").val(),
+			success:function(data){
+				alert(data);
+			}
+			
+		})
+	})
+}) */
+</script>
+</head>
+<body>
+<div class="div1">
+<form class="Search" action="Show" method="post">
+<input type="text"  id="KeyWords">
+<input type="button" id="btn1" value="搜索">
+</form>
+<div id="detail"><br>
+<label>以下为书籍信息</label>
+<table align="center" border="2px;" style="border-color:#87CEFA">
+  <tr><td>书籍名称</td><td>价格</td></tr>
+
+	<c:if test="${!empty requestScope.list}">
+	  <c:forEach items="${requestScope.list}" var="book">
+		<tr>
+			<td align="center" >${book.name}</td>
+			<td align="center" >${book.price}</td>
+		</tr>
+	</c:forEach>  
+		<tr>
+			<td align="center" ><a href="">豆瓣首页</a></td>
+			<td align="center" ><a href="">亚马逊首页</a></td>
+		</tr>
+	</c:if>	
+</table>
+</div>
+</div>
+</body>
+</html>
